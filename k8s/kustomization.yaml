@@ -4,4 +4,4 @@ resources:
   - deployment.yaml
   - service.yaml
   - route.yaml
-  - ../tekton/base
+  - ../tekton
