@@ -1,0 +1,77 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+
+metadata:
+  name: eurobridge-app
+
+spec:
+  workspaces:
+    - name: pipeline-shared-data
+
+  params:
+    - name: app-name
+      type: string
+      description: Name of the application
+    - name: source-repo-url
+      type: string
+      description: GitHub repository url
+    - name: docker-image
+      type: string
+      description: Docker image repository
+
+  tasks:
+    - name: clone-source-repo
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: $(params.source-repo-url)
+      workspaces:
+        - name: output
+          workspace: pipeline-shared-data
+
+    - name: run-tests
+      taskRef:
+        name: npm
+        kind: Task
+      runAfter:
+        - clone-source-repo
+      params:
+        - name: ARGS
+          value:
+            - install-ci-test
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data
+
+    - name: create-image
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      runAfter:
+        - run-tests
+      params:
+        - name: IMAGE
+          value: "$(params.docker-image)"
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data
+
+    - name: create-configuration
+      taskRef:
+        name: create-configuration
+      runAfter:
+        - create-image
+      params:
+        - name: app-name
+          value: "$(params.app-name)"
+        - name: source-repo
+          value: "$(params.source-repo-url)"
+        - name: commit
+          value: "$(tasks.clone-source-repo.results.commit)"
+        - name: image-repo
+          value: "$(params.docker-image)"
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data
