@@ -1,0 +1,8 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: eurobridge-app
+spec:
+  to:
+    kind: Service
+    name: eurobridge-app
