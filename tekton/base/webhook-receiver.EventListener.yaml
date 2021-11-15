@@ -29,7 +29,7 @@ spec:
           - name: source-repo-url
             value: https://github.com/thomasirmer/eurobridge-app
           - name: docker-image
-            value: quay.io/thomasirmer/eurobridge-app:$(tasks.clone-source-repo.results.commit)
+            value: quay.io/thomasirmer/eurobridge-app
         pipelineRef:
           name: eurobridge-app
         workspaces:

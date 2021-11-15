@@ -53,7 +53,7 @@ spec:
         - run-tests
       params:
         - name: IMAGE
-          value: "$(params.docker-image)"
+          value: "$(params.docker-image):$(tasks.clone-source-repo.results.commit)"
       workspaces:
         - name: source
           workspace: pipeline-shared-data
