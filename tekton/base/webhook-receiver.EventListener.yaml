@@ -41,6 +41,17 @@ spec:
                 resources:
                   requests:
                     storage: 1Gi
+          - name: gitops-repository
+            volumeClaimTemplate:
+              spec:
+                resources:
+                  requests:
+                    storage: 1Gi
+                accessModes:
+                  - ReadWriteOnce
+          - name: git-credentials
+            secret:
+              secretName: git-credentials
 
 ---
 apiVersion: triggers.tekton.dev/v1alpha1
